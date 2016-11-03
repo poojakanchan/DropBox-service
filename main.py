@@ -92,7 +92,7 @@ class VideoInfoHandler(blobstore_handlers.BlobstoreDownloadHandler):
         if not file_info or not file_info.blob:
             self.error(404)
             return
-        self.response.headers['Content-Type']='video/mp4'
+        self.response.headers['Content-Type']= str(file_info.blob.content_type)
         self.send_blob(file_info.blob, save_as=True)
                  
 class FileInfoHandler(BaseHandler):
@@ -111,7 +111,8 @@ class FileInfoHandler(BaseHandler):
             #img.resize(width=80, height=100)
         img.im_feeling_lucky()
         thumbnail = img.execute_transforms(output_encoding=images.JPEG)
-        self.response.headers['Content-Type'] = 'image/jpeg'
+        #self.response.headers['Content-Type'] = 'image/jpeg'
+        self.response.headers['Content-Type'] = str(file_info.blob.content_type)
         self.response.out.write(thumbnail)
         #self.response.out.write(template.render("info.html", {
         #'file_info': file_info,
