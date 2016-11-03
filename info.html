@@ -1,0 +1,18 @@
+<html>
+<head>
+  <title>File Hangar: File information</title>
+</head>
+<body>
+  <p style="float: right"><a href="{{logout_url}}">Log Out</a></p>
+  <h1>File information</h1>
+  <table>
+    <tr><th>Filename</th><td>{{file_info.blob.filename}}</td></tr>
+    <tr><th>Size</th><td>{{file_info.blob.size}} bytes</td></tr>
+    <tr><th>Uploaded</th><td>{{file_info.uploaded_at}}</td></tr>
+    <tr><th>Uploaded by</th><td>{{file_info.uploaded_by}}</td></tr>
+    <tr><th>Content Type</th><td>{{file_info.blob.content_type}}</td></tr>
+  </table>
+  
+  <p><a href="/file/{{file_info.key.id}}/download">Download this file</a></p>
+</body>
+</html>

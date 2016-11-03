@@ -1,0 +1,61 @@
+<html>
+<head>
+<link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+<script src="/bootstrap/js/jquery.js"></script>
+  <title>File list:</title>
+</head>
+
+
+<br>
+<br>
+<br>
+<nav class="navbar navbar-inverse navbar-fixed-top" style="height: 50px;" >
+     <div class="container-fluid">
+    <p class="navbar-right"><a href="{{logout_url}}" class="btn .btn-primary btn-lg">Log Out</a></p>
+    <div class="navbar-header" align="center" ><h3><a href="/" style="color:#BDC3C7">DropBox Service</a></h3></div>
+  	</div>
+  </nav>
+  
+ <div class="container" style="padding-top: 10px;"> 
+<form action="/transform/?" method="get">
+<input type="hidden" name="photo_key" value="{{photo_key}}">
+<input type="hidden" name="prev_width" value="{{prev_width}}">
+<input type="hidden" name="prev_rotate" value="{{prev_rotate}}">
+<div class="form-group" style="padding-top: 100px;">
+<div class="container">
+
+<div class = "row" >
+<div class="col-sm-4">
+Resize <input type="range" height ="10" width = "100" name="width_new" value="{{prev_width}}" min="50" max="1000" class="form-control">
+
+<!--  <p>Resize: <input type="text" name="width_new"></p>-->
+</div>
+<div class="col-sm-2">
+ <select name="rotate" class="form-control" >
+    <option value="0">0</option>
+  	<option value="90">90</option>
+  	<option value="180">180</option>
+  	<option value="270">270</option>
+ 	 </select>
+</div>
+<div class="col-sm-2">
+<input type="submit" width =100 height =10 name="submit" value="Transform" class="btn btn-primary">
+</div>
+<div class="col-sm-4">
+</div>
+</div>
+
+
+</div>
+</div>
+</form>
+<br>
+<br>
+<img src="data:;base64,{{image}}"/>
+</div>
+</html>
