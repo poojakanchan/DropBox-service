@@ -54,8 +54,20 @@ class BaseHandler(webapp.RequestHandler):
         self.response.out.write(template.render(path, template_args))
 
   
+class HomeHandler(BaseHandler):   
+    def get(self):
+        user = users.get_current_user()
+
+        if user:
+            url = users.create_logout_url("/")
+            self.redirect("/userhome")
+        else:
+            url = users.create_login_url("/")
+            self.response.out.write(template.render("home.html", {
+            'login_url': url,
+            }))
+
 class FileUploadFormHandler(BaseHandler):
-    @util.login_required    
     def get(self):
         self.response.out.write(template.render("upload.html", {
         'form_url': blobstore.create_upload_url('/upload'),
@@ -78,6 +90,7 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
                          url="/transform/?photo_key=%s" % (blob_info.key()))
                         # image=thumbnail)
         db.put(file_info)
+        
         #self.redirect("/file/%d" % (file_info.key().id(),))
         self.redirect('/')
         
@@ -158,65 +171,146 @@ class TransformHandler(BaseHandler):
 #        if not blobstore.get(photo_key):
 #            self.error(404)
 #        else:
-            photo_key = self.request.GET['photo_key']
+        photo_key = self.request.GET['photo_key']
             
-            img = images.Image(blob_key=photo_key)
+        img = images.Image(blob_key=photo_key)
             
-            width = 500
-            rotate =0
+        width = 500
             
-            if 'prev_width' in self.request.GET:
-                width = int(self.request.GET['prev_width'])
-           
-            if 'prev_rotate' in self.request.GET:
-                rotate = int(self.request.GET['prev_rotate'])
+        img.resize(width=width, height=width)
                 
-            if 'width_new' in self.request.GET and self.request.GET['width_new'] !='':
-                    width = int(self.request.GET['width_new'])
-            
-            img.resize(width=width, height=width)
-                
-            if 'rotate' in self.request.GET and self.request.GET['rotate'] != '':
-                rotate = int(self.request.GET['rotate'])
-            
-            if rotate !=0 :
-                img.rotate(rotate)
-                
-            img.im_feeling_lucky()
-            thumbnail = img.execute_transforms(output_encoding=images.JPEG)
-            imageEnc = b64encode(thumbnail)
-#            self.response.headers['Content-Type'] = 'image/jpeg'
-#            self.response.out.write(thumbnail)   
-            time.sleep(0.5)            
-            self.response.out.write(template.render("tranform.html", {
-            'image': imageEnc,
-            'prev_width': width,
-            'photo_key':photo_key,
-            'prev_rotate': rotate,
-            }))
-            
-   
-     
-class FlipHandler(BaseHandler):
-    def get(self, file_id):
-       # file_info = FileInfo.get_by_id(long(file_id))
-        if not file_id:
-            self.error(404)
-            return
-        file_info = FileInfo.get_by_id(long(file_id))
-        if not file_info or not file_info.blob:
-            self.error(404)
-            return
-        img = images.Image(blob_key=file_info.blob)
-        #img.resize(width=80, height=100)
-        #img.im_feeling_lucky()
-        img.rotate(180);
-        img.resize(width=80, height=80)
+          
         thumbnail = img.execute_transforms(output_encoding=images.JPEG)
         imageEnc = b64encode(thumbnail)
-        file_info.image = imageEnc
-        db.put(file_info)
-        self.redirect("/files/all")
+#            self.response.headers['Content-Type'] = 'image/jpeg'
+#            self.response.out.write(thumbnail)   
+        time.sleep(0.5)            
+        self.response.out.write(template.render("tranform.html", {
+            'image': imageEnc,
+            'photo_key':photo_key,  
+        }))
+            
+class ResizeHandler(BaseHandler):
+    def get(self, photo_key):
+        photo_key = self.request.GET['photo_key']
+      
+        if not blobstore.get(photo_key):
+            self.error(404)
+            return
+#        else:
+            
+        img = images.Image(blob_key=photo_key)
+            
+        width = 500
+           
+        if 'width_new' in self.request.GET and self.request.GET['width_new'] !='':
+                width = int(self.request.GET['width_new'])
+            
+        img.resize(width=width, height=width)    
+        thumbnail = img.execute_transforms(output_encoding=images.JPEG)
+        imageEnc = b64encode(thumbnail)
+#            self.response.headers['Content-Type'] = 'image/jpeg'
+#            self.response.out.write(thumbnail)   
+        time.sleep(0.5)            
+        self.response.out.write(template.render("tranform.html", {
+            'image': imageEnc,
+            'photo_key':photo_key,
+            }))
+            
+            
+class RotateHandler(BaseHandler):
+    def get(self, photo_key):
+        
+        photo_key = self.request.GET['photo_key']
+        if not blobstore.get(photo_key):
+            self.error(404)
+            return
+#        else:
+       
+            
+        img = images.Image(blob_key=photo_key)
+            
+            
+            
+        img.resize(width=500, height=500)
+        rotate =0 
+        if 'rotate' in self.request.GET and self.request.GET['rotate'] != '':
+            rotate = int(self.request.GET['rotate'])
+            
+        if rotate !=0 :
+            img.rotate(rotate)
+        thumbnail = img.execute_transforms(output_encoding=images.JPEG)
+        imageEnc = b64encode(thumbnail)
+#            self.response.headers['Content-Type'] = 'image/jpeg'
+#            self.response.out.write(thumbnail)   
+        time.sleep(0.5)            
+        self.response.out.write(template.render("tranform.html", {
+            'image': imageEnc,
+            'photo_key':photo_key,
+            }))
+ 
+     
+class HoriFlipHandler(BaseHandler):
+    def get(self, photo_key):
+        
+        photo_key = self.request.GET['photo_key']
+        if not blobstore.get(photo_key):
+            self.error(404)
+            return
+        img = images.Image(blob_key=photo_key)
+        img.resize(width=500, height=500)
+        img.horizontal_flip()
+        thumbnail = img.execute_transforms(output_encoding=images.JPEG)
+        imageEnc = b64encode(thumbnail)
+#            self.response.headers['Content-Type'] = 'image/jpeg'
+#            self.response.out.write(thumbnail)   
+        time.sleep(0.5)            
+        self.response.out.write(template.render("tranform.html", {
+            'image': imageEnc,
+            'photo_key':photo_key,
+            }))
+      
+      
+class VertFlipHandler(BaseHandler):
+    def get(self, photo_key):
+        
+        photo_key = self.request.GET['photo_key']
+        if not blobstore.get(photo_key):
+            self.error(404)
+            return
+        img = images.Image(blob_key=photo_key)
+        img.resize(width=500, height=500)
+        img.vertical_flip()
+        thumbnail = img.execute_transforms(output_encoding=images.JPEG)
+        imageEnc = b64encode(thumbnail)
+#            self.response.headers['Content-Type'] = 'image/jpeg'
+#            self.response.out.write(thumbnail)   
+        time.sleep(0.5)            
+        self.response.out.write(template.render("tranform.html", {
+            'image': imageEnc,
+            'photo_key':photo_key,
+            }))
+  
+      
+class EnhanceHandler(BaseHandler):
+    def get(self, photo_key):
+        
+        photo_key = self.request.GET['photo_key']
+        if not blobstore.get(photo_key):
+            self.error(404)
+            return
+        img = images.Image(blob_key=photo_key)
+        img.resize(width=500, height=500)
+        img.im_feeling_lucky()
+        thumbnail = img.execute_transforms(output_encoding=images.JPEG)
+        imageEnc = b64encode(thumbnail)
+#            self.response.headers['Content-Type'] = 'image/jpeg'
+#            self.response.out.write(thumbnail)   
+        time.sleep(0.5)            
+        self.response.out.write(template.render("tranform.html", {
+            'image': imageEnc,
+            'photo_key':photo_key,
+            }))  
         
 class FileDisplayHandler(BaseHandler):
     def get(self):
@@ -310,7 +404,8 @@ class DeleteHandler(webapp2.RequestHandler):
         #zf = zipfile.ZipFile("%d.zip" % (long(file_id)), "w")
  
 app = webapp2.WSGIApplication([
-   ('/', FileUploadFormHandler),
+   ('/userhome', FileUploadFormHandler),
+   ('/', HomeHandler),
     ('/upload', FileUploadHandler),
     ('/file/([0-9]+)', FileInfoHandler),
     ('/video/([0-9]+)', VideoInfoHandler),
@@ -320,6 +415,11 @@ app = webapp2.WSGIApplication([
      ('/videos/all', VideoDisplayHandler),
      ('/img/([^/]+)?', Image),
      ('/transform/([^/]+)?', TransformHandler),
+     ('/rotate/([^/]+)?', RotateHandler),
+     ('/resize/([^/]+)?', ResizeHandler),
+     ('/horiflip/([^/]+)?', HoriFlipHandler),
+     ('/vertflip/([^/]+)?', VertFlipHandler),
+     ('/enhance/([^/]+)?', EnhanceHandler),
      ('/delete/([0-9]+)', DeleteHandler),
      
 ], debug=True)

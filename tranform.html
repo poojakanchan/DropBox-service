@@ -15,48 +15,69 @@
 <br>
 <br>
 
-<nav class="navbar navbar-inverse navbar-fixed-top" style="height: 50px;" >
+ 
+  <body background="http://www.textures.com/system/categories/253/frontend-large.jpg">
+  <nav class="navbar navbar-inverse navbar-fixed-top" style="height: 50px;" >
      <div class="container-fluid">
     <p class="navbar-right"><a href="{{logout_url}}" class="btn .btn-primary btn-lg">Log Out</a></p>
     <div class="navbar-header" align="center" ><h3><a href="/" style="color:#BDC3C7">DropBox Service</a></h3></div>
   	</div>
   </nav>
-  
  <div class="container" style="padding-top: 10px;"> 
-<form action="/transform/?" method="get">
-<input type="hidden" name="photo_key" value="{{photo_key}}">
-<input type="hidden" name="prev_width" value="{{prev_width}}">
-<input type="hidden" name="prev_rotate" value="{{prev_rotate}}">
 <div class="form-group" style="padding-top: 100px;">
-<div class="container">
-
+<div class="container" style="border: 1px solid #ccc;background-color: #F4ECF7;border-radius: 4px;">
 <div class = "row" >
-<div class="col-sm-4">
-Resize <input type="range" height ="10" width = "100" name="width_new" value="{{prev_width}}" min="50" max="1000" class="form-control">
-
+<div class="col-sm-3">
+<form action="/resize/?" method="get">
+<input type="hidden" name="photo_key" value="{{photo_key}}">
+<input type="range" height ="10" width = "100" name="width_new" value="500" min="50" max="1000" class="form-control">
+<input type="submit" width =100 height =10 name="submit" value="Resize" class="btn btn-primary" style="background-color:#641E16">
+</form>
 <!--  <p>Resize: <input type="text" name="width_new"></p>-->
 </div>
 <div class="col-sm-2">
+<form action="/rotate/?" method="get">
+<input type="hidden" name="photo_key" value="{{photo_key}}">
  <select name="rotate" class="form-control" >
-    <option value="0">0</option>
+    <option value="0" selected>0</option>
   	<option value="90">90</option>
   	<option value="180">180</option>
   	<option value="270">270</option>
  	 </select>
+ <input type="submit" width =100 height =10 name="submit" value="Rotate" class="btn btn-primary" style="background-color:#641E16">
+</form>
 </div>
 <div class="col-sm-2">
-<input type="submit" width =100 height =10 name="submit" value="Transform" class="btn btn-primary">
-</div>
-<div class="col-sm-4">
-</div>
-</div>
-
-
-</div>
-</div>
+<form action="/horiflip/?" method="get">
+<input type="hidden" name="photo_key" value="{{photo_key}}">
+<input type="submit" width =100 height =10 name="submit" value="Flip Horizontally" class="btn btn-primary" style="background-color:#641E16">
 </form>
+</div>
+<div class="col-sm-2">
+<form action="/vertflip/?" method="get">
+<input type="hidden" name="photo_key" value="{{photo_key}}">
+<input type="submit" width =100 height =10 name="submit" value="Flip Vertically" class="btn btn-primary" style="background-color:#641E16">
+</form>
+
+</div>
+<div class="col-sm-2">
+<form action="/enhance/?" method="get">
+<input type="hidden" name="photo_key" value="{{photo_key}}">
+<input type="submit" width =100 height =10 name="submit" value="Enhance Image" class="btn btn-primary" style="background-color:#641E16">
+</form>
+
+</div>
+<div class="col-sm-2">
+</div>
+</div>
+
+
+</div>
+</div>
+
 <br>
 <br>
 <img src="data:;base64,{{image}}"/>
 </div>
+</body>
 </html>
