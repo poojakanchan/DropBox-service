@@ -1,11 +1,6 @@
-# App Engine Blobstore Sample
-
-<!-- auto-doc-link -->
-These samples are used on the following documentation pages:
-
->
-* https://cloud.google.com/appengine/docs/python/tools/webapp/blobstorehandlers
-* https://cloud.google.com/appengine/docs/python/blobstore/
-
-<!-- end-auto-doc-link -->
- -->
+# DropBox service using Google App Engine
+ DropBox service application allows users to upload/download image and video files and view them. 
+ Provides differnt image editing options
+ 
+ Technologies Used: Google App Engine, webapp2 server, Python, Blobstore APIs
+ 
